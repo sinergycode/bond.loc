@@ -6,6 +6,7 @@ use vova07\imperavi\Widget;
 use yii\helpers\ArrayHelper;
 use common\models\Tag;
 use kartik\select2\Select2;
+use common\models\Blog;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
@@ -23,22 +24,28 @@ use kartik\select2\Select2;
             'lang' => 'ru',
             'minHeight' => 200,
             'formatting' => ['p', 'blockquote', 'h2'],
+            'imageUpload' => \yii\helpers\Url::to(['site/save-redactor-image', 'sub' => 'blog']),
+//            'imageUpload' => \yii\helpers\Url::to(['site/native-imperavi']),
             'plugins' => [
                 'clips',
                 'fullscreen',
+                'imagemanager'
             ],
         ],
     ]); ?>
     
     <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status_id')->dropDownList(['off', 'on']) ?>
+    <?= $form->field($model, 'status_id')->dropDownList(Blog::STATUS_LIST) ?>
 
     <?= $form->field($model, 'sort')->textInput() ?>
     
     <?= $form->field($model, 'tags_array')->widget(kartik\select2\Select2::classname(), [
         'data' => ArrayHelper::map(Tag::find()->all(), 'id', 'name'),
-        'value' => ArrayHelper::map($model->tags, 'id', 'name'),
+//        'data' => [
+//            'ключ1' => 'значение1',
+//            'ключ2' => 'значение2'
+//        ],
         'language' => 'ru',
         'options' => [
             'placeholder' => 'Выбрать тэг ...', 
@@ -56,5 +63,6 @@ use kartik\select2\Select2;
     </div>
 
     <?php ActiveForm::end(); ?>
+    
 
 </div>

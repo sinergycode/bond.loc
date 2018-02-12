@@ -17,11 +17,6 @@ $this->params['breadcrumbs'][] = 'Update';
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-    
-    <div class="well">
-        <?php foreach ($model->tags as $one): ?>
-        <?= $one->name; ?> <br>
-        <?php endforeach; ?>
-    </div>
 
 </div>
+

@@ -38,5 +38,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'tagsAsString'
         ],
     ]) ?>
+    
+    <?php 
+//    echo '<pre>' . print_r($model, true) . '</pre>';
+    ?>
 
 </div>
+<?php // $model->CreateDirectory(); ?>

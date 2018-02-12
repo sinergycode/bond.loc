@@ -13,18 +13,19 @@ return [
     'bootstrap' => ['log', 'gii', 'debug'],
     'modules' => [
         'gii' => [
-            'class' => 'yii\gii\Module'
+            'class' => 'yii\gii\Module',
+            'generators' => [ //here
+                'crud' => [ // generator name
+                    'class' => 'yii\gii\generators\crud\Generator', // generator class
+                    'templates' => [ //setting for out templates
+                        'myGii' => '@common/generators/crud/default', // template name => path to template
+                    ]
+                ]
+            ],
         ],
         'debug' => 'yii\debug\Module'
     ],
     'components' => [
-        'view' => [
-             'theme' => [
-                 'pathMap' => [
-                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-                 ],
-             ],
-        ],
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],

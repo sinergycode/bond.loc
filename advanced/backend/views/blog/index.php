@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use common\models\Blog;
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\BlogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -45,12 +46,14 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'text:ntext',
             ['attribute' => 'url', 'format' => 'raw', 'headerOptions' => ['class' => 'aoaoaoaoa']],
             ['attribute' => 'status_id', 
-                            'filter' => \common\models\Blog::getStatusList(), 
+                            'filter' => Blog::STATUS_LIST, 
                             'value' => function($model) {
                                             return $model->getStatusName();
                                        }
             ],
             'sort',
+            'date_create:datetime',
+            'date_update:datetime',
             ['attribute' => 'tags', 'value' => 'TagsAsString']
         ],
     ]); ?>
