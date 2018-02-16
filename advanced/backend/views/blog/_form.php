@@ -1,12 +1,16 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use vova07\imperavi\Widget;
+use yii\helpers\Html;
+use yii\helpers\Url; 
 use yii\helpers\ArrayHelper;
 use common\models\Tag;
-use kartik\select2\Select2;
 use common\models\Blog;
+use vova07\imperavi\Widget;
+use kartik\select2\Select2;
+use kartik\file\FileInput;
+use yii\web\JsExpression;
+
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
@@ -15,32 +19,34 @@ use common\models\Blog;
 
 <div class="blog-form">
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-    
-    <?= $form->field($model, 'text')->widget(Widget::className(), [
-        'settings' => [
-            'lang' => 'ru',
-            'minHeight' => 200,
-            'formatting' => ['p', 'blockquote', 'h2'],
-            'imageUpload' => \yii\helpers\Url::to(['site/save-redactor-image', 'sub' => 'blog']),
-//            'imageUpload' => \yii\helpers\Url::to(['site/native-imperavi']),
-            'plugins' => [
-                'clips',
-                'fullscreen',
-                'imagemanager'
-            ],
-        ],
+    <?php $form = ActiveForm::begin([
+        'options' => ['enctype' => 'multipart/form-data'],
     ]); ?>
-    
-    <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status_id')->dropDownList(Blog::STATUS_LIST) ?>
-
-    <?= $form->field($model, 'sort')->textInput() ?>
+    <!-- Благодаря тому что мы с помощью col-xs-6 сделали все в два ряда, то обернем в див чтобы не вылезала фото -->
+    <div class="row"> 
+        
+    <?= $form->field($model, 'file', ['options' => ['class' => 'col-xs-6']])->widget(\kartik\file\FileInput::classname(), [
+        'options' => ['accept' => 'image/*'],
+        'pluginOptions' => [
+            'showCaption' => false,
+            'showRemove' => false,
+            'showUpload' => false,
+            'browseClass' => 'btn btn-primary btn-block',
+            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+            'browseLabel' =>  'Выбрать фото'
+        ],
+    ]) ?>
+        
+    <?= $form->field($model, 'title', ['options' => ['class' => 'col-xs-6']])->textInput(['maxlength' => true]) ?>
     
-    <?= $form->field($model, 'tags_array')->widget(kartik\select2\Select2::classname(), [
+    <?= $form->field($model, 'url', ['options' => ['class' => 'col-xs-6']])->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'status_id', ['options' => ['class' => 'col-xs-6']])->dropDownList(Blog::STATUS_LIST) ?>
+
+    <?= $form->field($model, 'sort', ['options' => ['class' => 'col-xs-6']])->textInput() ?>
+        
+    <?= $form->field($model, 'tags_array', ['options' => ['class' => 'col-xs-6']])->widget(kartik\select2\Select2::classname(), [
         'data' => ArrayHelper::map(Tag::find()->all(), 'id', 'name'),
 //        'data' => [
 //            'ключ1' => 'значение1',
@@ -58,11 +64,51 @@ use common\models\Blog;
         ],
     ]);
     ?>
+    </div>
+    
+        <?= $form->field($model, 'text')->widget(Widget::className(), [
+        'settings' => [
+            'lang' => 'ru',
+            'minHeight' => 200,
+            'formatting' => ['p', 'blockquote', 'h2'],
+            'imageUpload' => \yii\helpers\Url::to(['site/save-redactor-image', 'sub' => 'blog']),
+//            'imageUpload' => \yii\helpers\Url::to(['site/native-imperavi']),
+            'plugins' => [
+                'clips',
+                'fullscreen',
+                'imagemanager'
+            ],
+        ],
+    ]); ?>
+        
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
+        <?= FileInput::widget([
+        'name' => 'ImageManager[attachment]',
+        'options'=>[
+            'multiple'=>true
+        ],
+        'pluginOptions' => [
+            'deleteUrl' => Url::toRoute(['/blog/delete-image']),
+            'initialPreview'=> $model->imagesLinks,
+            'initialPreviewAsData'=>true,
+            'overwriteInitial'=>false,
+            'initialPreviewConfig'=>$model->imagesLinksData,
+            'uploadUrl' => Url::to(['/site/save-img']),
+            'uploadExtraData' => [
+                'ImageManager[class]' => $model->formName(),
+                'ImageManager[item_id]' => $model->id
+            ],
+            'maxFileCount' => 10
+        ],
+        'pluginEvents' => [
+            'filesorted' => new JsExpression('function(event, params){
+                  $.post("'.Url::toRoute(["/blog/sort-image","id"=>$model->id]).'",{sort: params});
+            }')
+        ],
+     ]);?>
     
-
 </div>

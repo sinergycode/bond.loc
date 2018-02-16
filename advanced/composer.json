@@ -21,7 +21,9 @@
         "vova07/yii2-imperavi-widget": "*",
         "dmstr/yii2-adminlte-asset": "^2.1",
         "kartik-v/yii2-widget-select2": "@dev",
-        "kartik-v/yii2-widget-fileinput": "@dev"
+        "kartik-v/yii2-widget-fileinput": "@dev",
+        "yurkinx/yii2-image": "dev-master",
+        "metalguardian/yii2-fotorama-widget": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

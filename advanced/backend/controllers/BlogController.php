@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Blog;
 use common\models\BlogSearch;
+use common\models\ImageManager;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,6 +25,8 @@ class BlogController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'delete-image' => ['POST'],
+                    'sort-image' => ['POST'],
                 ],
             ],
         ];
@@ -109,6 +112,35 @@ class BlogController extends Controller
 
         return $this->redirect(['index']);
     }
+    
+    public function actionDeleteImage() {
+        if(($model = ImageManager::findOne(Yii::$app->request->post('key'))) and $model->delete()){
+            return true;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+    public function actionSortImage($id) {
+        if(Yii::$app->request->isAjax){
+            $post = Yii::$app->request->post('sort');
+            if($post['oldIndex'] > $post['newIndex']){
+                $param = ['and',['>=','sort',$post['newIndex']],['<','sort',$post['oldIndex']]];
+                $counter = 1;
+            }else{
+                $param = ['and',['<=','sort',$post['newIndex']],['>','sort',$post['oldIndex']]];
+                $counter = -1;
+            }
+            ImageManager::updateAllCounters(['sort' => $counter], [
+               'and',['class'=>'blog','item_id'=>$id],$param
+               ]);
+            ImageManager::updateAll(['sort' => $post['newIndex']], [
+                'id' => $post['stack'][$post['newIndex']]['key']
+            ]);
+            return true;
+        }
+        throw new MethodNotAllowedHttpException();
+    }
+    
 
     /**
      * Finds the Blog model based on its primary key value.

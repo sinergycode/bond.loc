@@ -9,6 +9,10 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'image' => [
+                    'class' => 'yii\image\ImageDriver',
+                    'driver' => 'GD',  //GD or Imagick
+                   ]
     ],
     'bootstrap' => ['debug'],
     'modules' => [

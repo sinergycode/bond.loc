@@ -52,6 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                        }
             ],
             'sort',
+            'smallImage:image',
             'date_create:datetime',
             'date_update:datetime',
             ['attribute' => 'tags', 'value' => 'TagsAsString']

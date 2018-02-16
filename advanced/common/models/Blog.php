@@ -7,6 +7,8 @@ use yii\helpers\ArrayHelper;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
 use common\components\behaviors\StatusBehavior;
+use yii\web\UploadedFile;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "blog".
@@ -95,6 +97,24 @@ class Blog extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
     
+    // связь для загрузки нескольких фото
+    public function getImages(){
+        return $this->hasMany(ImageManager::className(), ['item_id' => 'id'])->andWhere(['class'=>self::tableName()])->orderBy('sort');
+    }
+    
+    public function getImagesLinks() {
+        return ArrayHelper::getColumn($this->images,'imageUrl');
+    }
+    
+    public function getImagesLinksData() {
+        return ArrayHelper::toArray($this->images,[
+                ImageManager::className() => [
+                    'caption'=>'name',
+                    'key'=>'id',
+                ]]
+        );
+    }
+    
     public function getBlogTag() {
         return $this->hasMany(BlogTag::className(), ['blog_id' => 'id']);
     }
@@ -115,6 +135,16 @@ class Blog extends \yii\db\ActiveRecord
     }
         
     // функия для index.php
+    public function getSmallImage() {
+        if($this->image) {
+            $path = str_replace('admin.', '', Url::home(true)) . 'uploads/images/blog/50x50/' . $this->image;
+        }else {
+            $path = str_replace('admin.', '', Url::home(true)) . 'uploads/images/no-image.svg';
+        } 
+        return  $path;
+    }
+ 
+    // функия для index.php, view.php
     public function getTagsAsString() {
         $arr = ArrayHelper::map($this->tags, 'id', 'name');
         return  implode(', ', $arr);
@@ -133,24 +163,26 @@ class Blog extends \yii\db\ActiveRecord
     public function beforeSave() {
         if($file = UploadedFile::getInstance($this, 'file')) {
             $dir = Yii::getAlias("@images") .'/blog/';
-            if(file_exists($dir . $this->image)) {
-                unlink($dir . $this->image);
-            }
-            if(file_exists($dir . '50x50/' . $this->image)) {
-                unlink($dir . '50x50/' . $this->image);
-            }
-            if(file_exists($dir . '800x/' . $this->image)) {
-                unlink($dir . '800x/' . $this->image);
+            if (!is_dir($dir . $this->image)) {
+                if(file_exists($dir . $this->image)) {
+                    unlink($dir . $this->image);
+                }
+                if(file_exists($dir . '50x50/' . $this->image)) {
+                    unlink($dir . '50x50/' . $this->image);
+                }
+                if(file_exists($dir . '800x/' . $this->image)) {
+                    unlink($dir . '800x/' . $this->image);
+                } 
             }
             $this->image = strtotime('now') . '_' . Yii::$app->getSecurity()->generateRandomString(6) . '.' . $file->extension;
             $file->saveAs($dir . $this->image);
             $imag = Yii::$app->image->load($dir . $this->image);
             $imag->background('#fff', 0);
-            $imag->resize('50', '50', Yii\images\drivers\Image::INVERSE);
+            $imag->resize('50', '50', Yii\image\drivers\Image::INVERSE);
             $imag->save($dir . '50x50/' . $this->image, 90);
             $imag = Yii::$app->image->load($dir . $this->image);
             $imag->background('#fff', 0);
-            $imag->resize('800', null, Yii\images\drivers\Image::INVERSE);
+            $imag->resize('800', null, Yii\image\drivers\Image::INVERSE);
             $imag->save($dir . '800x/' . $this->image, 90);
         }
         return parent::beforeSave($insert);
@@ -201,7 +233,7 @@ class Blog extends \yii\db\ActiveRecord
     }
     
     
-        public function CreateDirectory() {
+    public function CreateDirectory() {
         $dir = Yii::getAlias('@images') . '/blog_azi/';
             if(!file_exists($dir)) {
                 Yii::$app->session->addFlash('error', 'file not exist, need to create');

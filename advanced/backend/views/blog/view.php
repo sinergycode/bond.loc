@@ -35,13 +35,44 @@ $this->params['breadcrumbs'][] = $this->title;
             'status_id',
             'sort',
             'author.username',
-            'tagsAsString'
+            'tagsAsString',
+            'smallImage:image',
         ],
     ]) ?>
     
     <?php 
-//    echo '<pre>' . print_r($model, true) . '</pre>';
+    $fotorama = \metalguardian\fotorama\Fotorama::begin(
+        [
+            'options' => [
+                'loop' => true,
+                'hash' => true,
+                'ratio' => 800/600,
+            ],
+            'spinner' => [
+                'lines' => 20,
+            ],
+            'tagName' => 'span',
+            'useHtmlData' => false,
+            'htmlOptions' => [
+                'class' => 'custom-class',
+                'id' => 'custom-id',
+            ],
+        ]
+    ); 
+    foreach($model->images as $one) {
+        echo Html::img($one->imageUrl, ['alt' => $one->alt]);
+    }
     ?>
+    <?php \metalguardian\fotorama\Fotorama::end(); ?>
 
 </div>
-<?php // $model->CreateDirectory(); ?>
+
+<?php // $blog->CreateDirectory(); 
+//echo Yii::getAlias('@images');
+//?>
+<br>
+<?php
+//echo dirname(__DIR__);
+//$dir = Yii::getAlias('@images') . '/uploads/images/huiak/';
+//yii\helpers\FileHelper::createDirectory($dir);
+//?>

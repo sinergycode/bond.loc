@@ -31,7 +31,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'save-redactor-image', 'native-imperavi'],
+                        'actions' => ['logout', 'index', 'save-redactor-image', 'native-imperavi', 'save-img'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -108,6 +108,7 @@ class SiteController extends Controller
         return $this->goHome();
     }
     
+    // для загрузки фото из редактора
     public function actionSaveRedactorImage($sub = 'main') {
         $this->enableCsrfValidation = false;
         if(Yii::$app->request->isPost) {
@@ -115,8 +116,7 @@ class SiteController extends Controller
             if(!file_exists($dir)) {
                 FileHelper::createDirectory($dir);
             }
-//            $result_link = str_replace('admin.', '', Url::home(true)) . '/uploads/images/' . $sub . '/';
-            $result_link = Url::home(true) . 'uploads/images/' . $sub . '/';
+            $result_link = str_replace('admin.', '', Url::home(true)) . 'uploads/images/' . $sub . '/'; // симлинки
             $file = UploadedFile::getInstanceByName('file');
             $model = new DynamicModel(compact('file'));
             $model->addRule('file', 'image')->validate();
@@ -128,14 +128,53 @@ class SiteController extends Controller
             }else {
                 $model->file->name = strtotime('now') . '_' . Yii::$app->getSecurity()->generateRandomString(6) . '.' . $model->file->extension;
                 if($model->file->saveAs($dir . $model->file->name)) {
-//                    $imag = Yii::$app->image->load($dir . $model->file->name);
-//                    $imag->resize(800, NULL, Yii\image\drivers\Image::PRECISE)->save($dir . $model->file->name, 85);
+                    $imag = Yii::$app->image->load($dir . $model->file->name);
+                    $imag->resize(800, NULL, Yii\image\drivers\Image::PRECISE)->save($dir . $model->file->name, 85);
                     $result = ['filelink' => $result_link . $model->file->name, 'filename'=>$model->file->name];
                 }else {
                     $result = [
                         'error' => Yii::t('vova07/imperavi', 'ERROR_CAN_NOT_UPLOAD_FILE')
                     ];
                 }
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return $result;
+        }else {
+            throw new \yii\web\BadRequestHttpException('Only POST is allowed');
+        }
+    }
+    
+    // для загрузки нескольких фото
+    public function actionSaveImg() {
+        $this->enableCsrfValidation = false; // убираем crf валидацию потомучто будет идти POST зарос AJAX, который будет идти без Crf token хотя можно ??? его добавить в форме
+        if(Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+            $dir = Yii::getAlias('@images') . '/' . $post['ImageManager']['class'] . '/';
+            if(!file_exists($dir)) {
+                FileHelper::createDirectory($dir);
+            }
+            $result_link = str_replace('admin.', '', Url::home(true)) . 'uploads/images/' . $post['class'] . '/'; // симлинки
+            $file = UploadedFile::getInstanceByName('ImageManager[attachment]');
+            $model = new \common\models\ImageManager(); // подключаем нажу новую модель
+            $model->name = strtotime('now') . '_' . Yii::$app->getSecurity()->generateRandomString(6) . '.' . $file->extension;
+            $model->load($post);// для загрузки данных
+            $model->validate();
+            
+            if($model->hasErrors()) {
+                $result = [
+                    'error' => $model->getFirstError('file')
+                ];
+            }else {
+                if($file->saveAs($dir . $model->name)) {
+                    $imag = Yii::$app->image->load($dir . $model->name);
+                    $imag->resize(800, NULL, Yii\image\drivers\Image::PRECISE)->save($dir . $model->name, 85);
+                    $result = ['filelink' => $result_link . $model->name, 'filename'=>$model->name];
+                }else {
+                    $result = [
+                        'error' => 'Ошибка'
+                    ];
+                }
+                $model->save();
             }
             Yii::$app->response->format = Response::FORMAT_JSON;
             return $result;

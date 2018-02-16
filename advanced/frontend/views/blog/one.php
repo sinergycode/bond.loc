@@ -8,6 +8,14 @@
 <span class="badge"><?= $blog->author->username ?></span>
 <br>
 
-<?php // $blog->CreateDirectory(); ?>
+<?php // $blog->CreateDirectory(); 
+//echo Yii::getAlias('@images');
+//?>
+<br>
+<?php
+//echo dirname(__DIR__);
+//$dir = Yii::getAlias('@images') . '/tralalal/';
+//yii\helpers\FileHelper::createDirectory($dir);
+//?>
 
-<p><img src="http://admin.site.com/uploads/images/blog/1518330415_CPs7Bh.png"></p>
+<p><img src="http://site.com/uploads/images/blog/1518520415_IPpLHo.png"></p>
