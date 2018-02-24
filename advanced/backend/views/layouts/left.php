@@ -31,8 +31,10 @@
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
 //                    ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
-                    ['label' => 'Блог', 'icon' => 'pencil', 'url' => ['/blog']], // file-pen от FONTAWESOME
-                    ['label' => 'Тэги', 'icon' => 'tags', 'url' => ['/tag']],
+                    ['label' => 'Блог', 'icon' => 'pencil', 'url' => ['/blog/blog']], // file-pen от FONTAWESOME
+                    ['label' => 'Тэги', 'icon' => 'tags', 'url' => ['/blog/tag']],
+                    ['label' => 'Продукт', 'icon' => 'tags', 'url' => ['/product']],
+                    ['label' => 'Склад', 'icon' => 'tags', 'url' => ['/sklad']],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],

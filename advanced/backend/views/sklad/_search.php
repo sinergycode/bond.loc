@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\BlogSearch */
+/* @var $model common\models\SkladSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="blog-search">
+<div class="sklad-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -22,13 +22,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'title') ?>
 
-    <?= $form->field($model, 'text') ?>
-
-    <?= $form->field($model, 'url') ?>
-
-    <?= $form->field($model, 'status_id') ?>
-
-    <?php // echo $form->field($model, 'sort') ?>
+    <?= $form->field($model, 'address') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

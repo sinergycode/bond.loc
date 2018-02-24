@@ -1,4 +1,6 @@
 <?php
+use kartik\datecontrol\Module;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -23,7 +25,37 @@ return [
                 ]
             ],
         ],
-        'debug' => 'yii\debug\Module'
+        'debug' => 'yii\debug\Module',
+        'blog' => [
+            'class' => 'sinergycode\blog\Blog',
+        ],
+            'datecontrol' => [
+                'class' => 'kartik\datecontrol\Module',
+
+                 // format settings for displaying each date attribute (ICU format example)
+                'displaySettings' => [
+                    Module::FORMAT_DATE => 'php:d-M-Y',
+                    Module::FORMAT_TIME => 'php: H:i',
+                    Module::FORMAT_DATETIME => 'php:d-m-Y H:i', 
+                ],
+
+                // format settings for saving each date attribute (PHP format example)
+                'saveSettings' => [
+//                    Module::FORMAT_DATE => 'yyyy-M-dd', // saves as unix timestamp
+                    Module::FORMAT_DATE => 'php: U', // saves as unix timestamp
+                    Module::FORMAT_TIME => 'H:i:s',
+                    Module::FORMAT_DATETIME => 'yyyy-M-dd H:i:s',
+                ],
+
+                // set your display timezone
+                'displayTimezone' => 'UTC',
+
+                // set your timezone for date saved to db
+                'saveTimezone' => 'UTC',
+
+                // automatically use kartik\widgets for each of the above formats
+                'autoWidget' => true,
+            ],
     ],
     'components' => [
         'request' => [
@@ -56,6 +88,15 @@ return [
             'rules' => [
             ],
         ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => ' ',
+            'currencyCode' => 'EUR',
+            'timeFormat' => 'php: H:i',
+            'dateFormat' => 'php: d/M/Y',
+            'datetimeFormat' => 'php: d/M/Y H:i',
+        ],   
     ],
     'params' => $params,
 ];

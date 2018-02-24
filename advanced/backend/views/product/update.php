@@ -3,20 +3,17 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Blog */
+/* @var $model common\models\Product */
 
-$this->title = 'Update Blog: {nameAttribute}';
-$this->params['breadcrumbs'][] = ['label' => 'Blogs', 'url' => ['index']];
+$this->title = 'Update Product: {nameAttribute}';
+$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="blog-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="product-update">
 
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
 
 </div>
-

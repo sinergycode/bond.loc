@@ -2,16 +2,16 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\LoginForm;
 use yii\web\Controller;
+use yii\web\UploadedFile;
+use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
 use yii\helpers\FileHelper;
 use yii\helpers\Url;
-use yii\web\UploadedFile;
-use yii\base\DynamicModel;
-use yii\web\Response;
 use yii\helpers\Json;
+use yii\base\DynamicModel;
 /**
  * Site controller
  */

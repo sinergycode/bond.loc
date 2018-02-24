@@ -65,7 +65,7 @@ class ImageManager extends \yii\db\ActiveRecord
         return  $path;
     }
     
-    public function beforeDelere() {
+    public function beforeDelete() {
         if(parent::beforeDelete()) {
             ImageManager::updateAllCounters(['sort' => -1], [
                 'and', ['class' => 'blog', 'item_id' => $this->item_id], ['>', 'sort', $this->sort]

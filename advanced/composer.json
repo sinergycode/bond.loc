@@ -23,7 +23,12 @@
         "kartik-v/yii2-widget-select2": "@dev",
         "kartik-v/yii2-widget-fileinput": "@dev",
         "yurkinx/yii2-image": "dev-master",
-        "metalguardian/yii2-fotorama-widget": "^1.0"
+        "metalguardian/yii2-fotorama-widget": "^1.0",
+        "sinergycode/yii2-blog": "@dev",
+        "kartik-v/yii2-widget-datepicker": "@dev",
+        "kartik-v/yii2-datecontrol": "dev-master",
+        "kartik-v/yii2-field-range": "dev-master",
+        "kartik-v/yii2-helpers": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
